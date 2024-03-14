@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 
-class Customer(Base):
+class Member(Base):
     __tablename__ = "members"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

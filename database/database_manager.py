@@ -1,59 +1,72 @@
-from models import Customer, Session
+from models import Member, Session
 
 
-def add_customer(name, phone_number, email, date_of_birth, monthly_payment_made):
+def add_member(name, phone_number, email, date_of_birth, monthly_payment_made):
     """
-    Adds a new customer to the database.
+    Adds a new member to the database.
     """
     session = Session()
-    new_customer = Customer(
+    new_member = Member(
         name=name,
         phone_number=phone_number,
         email=email,
         date_of_birth=date_of_birth,
         monthly_payment_made=monthly_payment_made,
     )
-    session.add(new_customer)
+    session.add(new_member)
     session.commit()
-    print(f"Added new customer: {name}")
+    print(f"Added new member: {name}")
     session.close()
 
 
-def get_customer_by_id(customer_id):
+def get_member_by_id(member_id):
     """
-    Retrieves a customer by their ID.
+    Retrieves a member by their ID.
     """
     session = Session()
-    customer = session.query(Customer).filter(Customer.id == customer_id).first()
+    member = session.query(Member).filter(Member.id == member_id).first()
     session.close()
-    return customer
+    return member
 
 
-def update_customer_payment_status(customer_id, new_status):
-    """
-    Updates the payment status of a customer.
-    """
+def update_member(id, **kwargs):
     session = Session()
-    customer = session.query(Customer).filter(Customer.id == customer_id).first()
-    if customer:
-        customer.monthly_payment_made = new_status
+    member = session.query(Member).filter(Member.id == id).first()
+    if member:
+        for key, value in kwargs.items():
+            setattr(member, key, value)
         session.commit()
-        print(f"Updated payment status for {customer.name} to {new_status}.")
+        print(f"Updated member: {member.name}")
     else:
-        print("Customer not found.")
+        print("member not found.")
     session.close()
 
 
-def delete_customer(customer_id):
+def update_member_payment_status(member_id, new_status):
     """
-    Deletes a customer from the database.
+    Updates the payment status of a member.
     """
     session = Session()
-    customer = session.query(Customer).filter(Customer.id == customer_id).first()
-    if customer:
-        session.delete(customer)
+    member = session.query(Member).filter(Member.id == member_id).first()
+    if member:
+        member.monthly_payment_made = new_status
         session.commit()
-        print(f"Deleted customer: {customer.name}")
+        print(f"Updated payment status for {member.name} to {new_status}.")
     else:
-        print("Customer not found.")
+        print("member not found.")
+    session.close()
+
+
+def delete_member(member_id):
+    """
+    Deletes a member from the database.
+    """
+    session = Session()
+    member = session.query(Member).filter(Member.id == member_id).first()
+    if member:
+        session.delete(member)
+        session.commit()
+        print(f"Deleted member: {member.name}")
+    else:
+        print("member not found.")
     session.close()
