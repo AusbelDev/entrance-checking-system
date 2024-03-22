@@ -1,4 +1,4 @@
-from models import Member, Session
+from .models import Member, Session
 
 
 def add_member(name, phone_number, email, date_of_birth, monthly_payment_made):
