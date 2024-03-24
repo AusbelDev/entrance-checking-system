@@ -1,5 +1,5 @@
 from deepface import DeepFace
-from sqlalchemy.orm import Session
+from database.models import Session
 from database.models import Member, MemberEmbedding
 
 
