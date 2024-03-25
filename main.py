@@ -1,3 +1,3 @@
-import face_recognition.utils as u
+import face_recog.utils as u
 
 u.generate_all_embeddings()
