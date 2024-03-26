@@ -1,7 +1,10 @@
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-import random
-from face_recog.utils import generate_all_embeddings, check_embeddings
+from face_recog.utils import (
+    generate_all_embeddings,
+    check_embeddings,
+    generate_embedding_for_member,
+)
 
 
 class TestFaceRecognitionUtils(unittest.TestCase):
@@ -33,6 +36,45 @@ class TestFaceRecognitionUtils(unittest.TestCase):
 
         # Call the function under test
         generate_all_embeddings()
+
+        # Assertions to ensure the function behaves as expected
+        session_mock.add.assert_called_once()
+        session_mock.commit.assert_called_once()
+
+        # Check if DeepFace.represent was called with expected arguments
+        mock_represent.assert_called_once_with(
+            img_path="/fake_dir/fake_ path",
+            model_name="Facenet",
+        )
+
+    @patch("face_recog.utils.Session")
+    @patch("deepface.DeepFace.represent")
+    @patch("os.path.join")
+    @patch("os.path.dirname")
+    def test_generate_embedding(
+        self, mock_dirname, mock_join, mock_represent, mock_session
+    ):
+        # Mock the os.path.dirname to return a specific directory
+        mock_dirname.return_value = "/fake_dir"
+
+        # Mock os.path.join to return a fake file path
+        mock_join.side_effect = lambda *args: "/".join(args)
+
+        # Setup a mock Member and MemberEmbedding
+        member_mock = MagicMock(id=1, photo_path="fake_path_1")
+        new_embedding_mock = MagicMock()
+
+        # Mock the database session, members query, and the add and commit operations
+        session_mock = mock_session.return_value
+        session_mock.query.return_value.filter.return_value.first.return_value = (
+            member_mock
+        )
+
+        # Mock DeepFace.represent to return a specific output
+        mock_represent.return_value = [{"embedding": "fake_embedding"}]
+
+        # Call the function under test
+        generate_embedding_for_member(1)
 
         # Assertions to ensure the function behaves as expected
         session_mock.add.assert_called_once()
